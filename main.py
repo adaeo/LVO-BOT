@@ -32,9 +32,13 @@ async def on_ready():
     # members = '\n - '.join([member.name for member in guild.members])
     # print(f'Guild Members:\n - {members}')
 
-@bot.command(name="amogus")
+@bot.command(name="amogus", hidden=True)
 async def amogus(ctx):
     await ctx.send("https://c.tenor.com/fWICUw1py9UAAAAd/among-us-meme.gif")
+
+@bot.command(name='moyai', hidden=True)
+async def rules(ctx):
+    await ctx.send("https://c.tenor.com/Yu6oaGFXFVAAAAAC/ratio-moyai.gif")
 
 # Setup cogs after the bot is ready to prevent empty fields e.g. Guild ID
 async def setup():
