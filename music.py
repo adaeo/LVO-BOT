@@ -1,7 +1,5 @@
-import queue
 import discord
 from discord.ext import commands
-import asyncio
 import pafy
 import youtube_dl
 
@@ -34,12 +32,12 @@ class Music_Player(commands.Cog):
     async def play_song(self, ctx, song):
         url = pafy.new(song).getbestaudio().url
         ctx.voice_client.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(url, executable="ffmpeg.exe")), 
-        after=lambda error: self.bot.loop.create_task(self.check_queue))
+        after=lambda error: self.bot.loop.create_task(self.check_queue(ctx)))
 
         ctx.voice_client.source.volume = 0.5
 
 
-    @commands.command()
+    @commands.command(help="Joins voice channel of message author.")
     async def join(self, ctx):
         if ctx.author.voice is None:
             return await ctx.send("You are not connected to a voice channel.")
@@ -49,14 +47,14 @@ class Music_Player(commands.Cog):
 
         await ctx.author.voice.channel.connect()
 
-    @commands.command()
+    @commands.command(help="Leaves current voice channel.")
     async def leave(self, ctx):
         if ctx.voice_client is not None:
             return await ctx.voice_client.disconnect()
         
         await ctx.send("I am not connected to a voice channel.")
 
-    @commands.command()
+    @commands.command(help="Play a song using url or first result from keywords.")
     async def play(self, ctx, *, song=None):
         if song is None:
             return await ctx.send("You must include a song to play.")
@@ -88,7 +86,7 @@ class Music_Player(commands.Cog):
         await self.play_song(ctx, song)
         await ctx.send(f"Now playing {song}")
 
-    @commands.command()
+    @commands.command(help="Returns top 5 URL's based on keyword search.")
     async def search(self, ctx, *, song=None):
         if song is None: return await ctx.send("Please include a song to search for...")
 
@@ -106,8 +104,8 @@ class Music_Player(commands.Cog):
         embed.set_footer(text=f"Displaying the first {amount} results")
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def queue(self, ctx): #display the current guild's queue
+    @commands.command(help="Display current queue")
+    async def queue(self, ctx): # display the current guild's queue
         if len(self.song_queue[ctx.guild.id]) == 0:
             return await ctx.send("No songs in queue.")
 
@@ -121,7 +119,7 @@ class Music_Player(commands.Cog):
         embed.set_footer(text="Working as intended.")
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(help="Skips current song.")
     async def skip(self, ctx):
         if ctx.voice_client is None:
             return await ctx.send("I am not playing any song.")
@@ -134,3 +132,4 @@ class Music_Player(commands.Cog):
         ctx.voice_client.stop()
         await self.check_queue(ctx)
         
+# Based on https://www.youtube.com/watch?v=46ZHJcNnPJ8
