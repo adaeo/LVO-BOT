@@ -8,3 +8,4 @@ Discord Bot that plays music and retrieves images from danbooru (as of this upda
 - write a proper formatted README and add comments/documentation
 - administrative abilites, ensure ready for public use
 - expand danbooru capabilities
+- add cooldowns to commands

@@ -129,7 +129,31 @@ class Music_Player(commands.Cog):
             return await ctx.send("I am not playing any songs for you right now.")
 
         embed= discord.Embed(title="Skipping now.")
+        await ctx.send(embed=embed)
         ctx.voice_client.stop()
         await self.check_queue(ctx)
         
+    @commands.command(help="Pause current song.")
+    async def pause(self, ctx):
+        if ctx.voice_client is None:
+            return await ctx.send("I am not playing any song.")
+        if ctx.author.voice is None:
+            return await ctx.send("You are not in a voice channel.")
+        if ctx.voice_client.is_paused():
+            return await ctx.send("I'm already paused!")
+        
+        ctx.voice_client.pause()
+        await ctx.send("Now paused...")
+        
+    @commands.command(help="Resume current song.")
+    async def resume(self, ctx):
+        if ctx.voice_client is None:
+            return await ctx.send("I am not playing any song.")
+        if ctx.author.voice is None:
+            return await ctx.send("You are not in a voice channel.")
+        if ctx.voice_client.is_playing():
+            return await ctx.send("I'm already playing!")
+        
+        ctx.voice_client.resume()
+        await ctx.send("Now resuming...")
 # Based on https://www.youtube.com/watch?v=46ZHJcNnPJ8
