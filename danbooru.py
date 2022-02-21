@@ -17,6 +17,7 @@ class Danbooru(commands.Cog):
 
     @commands.command(help="Returns a random image from Danbooru")
     async def danbooru(self, ctx):
+        await ctx.send("Retrieving image... this will take a few seconds.")
         async with aiohttp.ClientSession() as session:
             async with session.get(await self.get_image(ctx)) as resp:
                 if resp.status != 200:
