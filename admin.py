@@ -27,4 +27,3 @@ class Admin(commands.Cog):
 
         await ctx.send(f"Setting status to {str(text)}")
         await self.bot.change_presence(activity=discord.Game(name=str(text)))
-        

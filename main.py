@@ -17,10 +17,13 @@ DISCORD_GUILD = os.getenv('discord_guild')
 intents = discord.Intents().all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix='~', intents=intents)
-    
+
+
 # Confirm ready status in console output
 @bot.event
 async def on_ready():
+    game = discord.Game("~help")
+    await bot.change_presence(activity=game)
     guild = discord.utils.get(bot.guilds, name=DISCORD_GUILD)
     print(
         f'{bot.user} is connected to the following guild:\n'
@@ -29,6 +32,9 @@ async def on_ready():
     # members = '\n - '.join([member.name for member in guild.members])
     # print(f'Guild Members:\n - {members}')
 
+@bot.command(name="amogus")
+async def amogus(ctx):
+    await ctx.send("https://c.tenor.com/fWICUw1py9UAAAAd/among-us-meme.gif")
 
 # Setup cogs after the bot is ready to prevent empty fields e.g. Guild ID
 async def setup():
