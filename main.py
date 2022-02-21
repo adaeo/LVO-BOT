@@ -3,11 +3,12 @@ from discord.ext import commands, tasks
 import os
 from dotenv import load_dotenv
 
+# Import from modules
 from music import Music_Player
 from danbooru import Danbooru
 from admin import Admin
 
-# Get the API token from the .env
+# Get tokens from the .env
 load_dotenv()
 DISCORD_TOKEN = os.getenv("discord_token")
 DISCORD_GUILD = os.getenv('discord_guild')
@@ -17,6 +18,7 @@ intents = discord.Intents().all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix='~', intents=intents)
     
+# Confirm ready status in console output
 @bot.event
 async def on_ready():
     guild = discord.utils.get(bot.guilds, name=DISCORD_GUILD)
@@ -28,7 +30,7 @@ async def on_ready():
     # print(f'Guild Members:\n - {members}')
 
 
-# setup cogs after the bot is ready to prevent empty fields e.g. Guild ID
+# Setup cogs after the bot is ready to prevent empty fields e.g. Guild ID
 async def setup():
     await bot.wait_until_ready()
     bot.add_cog(Music_Player(bot))

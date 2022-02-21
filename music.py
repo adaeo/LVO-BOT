@@ -3,10 +3,13 @@ from discord.ext import commands
 import pafy
 import youtube_dl
 
+FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+
 class Music_Player(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.song_queue = {}
+        self.currently_playing = None
 
         self.setup()
 
@@ -15,14 +18,16 @@ class Music_Player(commands.Cog):
             self.song_queue[guild.id] = []
 
     async def check_queue(self, ctx):
+        # Checks current queue of the guild
         if len(self.song_queue[ctx.guild.id]) > 0:
             ctx.voice_client.stop()
             await self.play_song(ctx, self.song_queue[ctx.guild.id][0])
             self.song_queue[ctx.guild.id].pop(0)
 
     async def search_song(self, amount, song, get_url=False):
+        # Retrieves results for a search query
         info = await self.bot.loop.run_in_executor(None, lambda: youtube_dl.YoutubeDL(
-            {"format" : "bestaudio", "quiet" : True}).extract_info(
+            {"format" : "bestaudio/best", "quiet" : True}).extract_info(
                 f"ytsearch{amount}:{song}", download=False, ie_key="YoutubeSearch"))
 
         if len(info['entries']) == 0: return None
@@ -30,15 +35,18 @@ class Music_Player(commands.Cog):
         return [entry['webpage_url'] for entry in info['entries']] if get_url else info
 
     async def play_song(self, ctx, song):
-        url = pafy.new(song).getbestaudio().url
-        ctx.voice_client.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(url, executable="ffmpeg.exe")), 
+        # Plays next song in queue
+        song = pafy.new(song)
+        url = song.getbestaudio().url
+        ctx.voice_client.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(url, executable="ffmpeg.exe", **FFMPEG_OPTIONS)), 
         after=lambda error: self.bot.loop.create_task(self.check_queue(ctx)))
-
         ctx.voice_client.source.volume = 0.5
+        self.currently_playing = song.title
 
 
     @commands.command(help="Joins voice channel of message author.")
     async def join(self, ctx):
+        # Joins voice channel of message author
         if ctx.author.voice is None:
             return await ctx.send("You are not connected to a voice channel.")
 
@@ -49,6 +57,7 @@ class Music_Player(commands.Cog):
 
     @commands.command(help="Leaves current voice channel.")
     async def leave(self, ctx):
+        # Leaves currently joined voice channel
         if ctx.voice_client is not None:
             return await ctx.voice_client.disconnect()
         
@@ -56,11 +65,12 @@ class Music_Player(commands.Cog):
 
     @commands.command(help="Play a song using url or first result from keywords.")
     async def play(self, ctx, *, song=None):
+        # Attempt to play song using url or first search result
         if song is None:
             return await ctx.send("You must include a song to play.")
 
         if ctx.voice_client is None:
-            return await ctx.send("I must be in a voice channel to play a song.")
+            return await ctx.send("I must be in a voice channel to play a song. Use ~join in a voice channel.")
         
         # handle song wehre song isn't a url
         if not ("youtube.com/watch?" in song or "https://youtu.be/" in song):
@@ -84,10 +94,11 @@ class Music_Player(commands.Cog):
                 return await ctx.send("Max queue length of 25 reached, please wait for the current song to finish.")
 
         await self.play_song(ctx, song)
-        await ctx.send(f"Now playing {song}")
+        await ctx.send(f"Now playing {self.currently_playing}\n {song}")
 
     @commands.command(help="Returns top 5 URL's based on keyword search.")
     async def search(self, ctx, *, song=None):
+        # Returns top 5 search results of search query
         if song is None: return await ctx.send("Please include a song to search for...")
 
         await ctx.send("Searching for song, this may take a few seconds.")
@@ -104,8 +115,9 @@ class Music_Player(commands.Cog):
         embed.set_footer(text=f"Displaying the first {amount} results")
         await ctx.send(embed=embed)
 
-    @commands.command(help="Display current queue")
-    async def queue(self, ctx): # display the current guild's queue
+    @commands.command(help="Display current queue.")
+    async def queue(self, ctx): 
+        # display the current guild's queue
         if len(self.song_queue[ctx.guild.id]) == 0:
             return await ctx.send("No songs in queue.")
 
@@ -119,8 +131,18 @@ class Music_Player(commands.Cog):
         embed.set_footer(text="Working as intended.")
         await ctx.send(embed=embed)
 
+    @commands.command(help="Clears queue.")
+    async def clear(self, ctx):
+        # Clear current guild's queue
+        if len(self.song_queue[ctx.guild.id]) == 0:
+            return await ctx.send("No songs in queue.")
+        
+        self.song_queue[ctx.guild.id].clear()
+        await ctx.send("Queue cleared.")
+
     @commands.command(help="Skips current song.")
     async def skip(self, ctx):
+        # Skip current playing song
         if ctx.voice_client is None:
             return await ctx.send("I am not playing any song.")
         if ctx.author.voice is None:
@@ -135,6 +157,7 @@ class Music_Player(commands.Cog):
         
     @commands.command(help="Pause current song.")
     async def pause(self, ctx):
+        # Pause current playing song
         if ctx.voice_client is None:
             return await ctx.send("I am not playing any song.")
         if ctx.author.voice is None:
@@ -147,6 +170,7 @@ class Music_Player(commands.Cog):
         
     @commands.command(help="Resume current song.")
     async def resume(self, ctx):
+        # Resume current paused song
         if ctx.voice_client is None:
             return await ctx.send("I am not playing any song.")
         if ctx.author.voice is None:
@@ -156,4 +180,14 @@ class Music_Player(commands.Cog):
         
         ctx.voice_client.resume()
         await ctx.send("Now resuming...")
+
+    @commands.command(help="Name current playing song.")
+    async def current(self, ctx):
+        # Name current playing song
+        if ctx.voice_client is None:
+            return await ctx.send("I am not playing any song.")
+        if ctx.author.voice is None:
+            return await ctx.send("You are not in a voice channel.")
+        await ctx.send(f"Currently Playing: {self.currently_playing}")
+
 # Based on https://www.youtube.com/watch?v=46ZHJcNnPJ8

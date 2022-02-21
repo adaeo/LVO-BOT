@@ -10,6 +10,7 @@ class Danbooru(commands.Cog):
         self.bot = bot
 
     async def get_image(self, ctx):
+        # Retrieves image from danbooru API as JSON
         rand_response = requests.get('https://danbooru.donmai.us/posts/random')
         response = requests.get(rand_response.url + '.json')
         json_data = json.loads(response.text)
@@ -17,6 +18,7 @@ class Danbooru(commands.Cog):
 
     @commands.command(help="Returns a random image from Danbooru")
     async def danbooru(self, ctx):
+        # Attempts to send random danbooru image
         await ctx.send("Retrieving image... this will take a few seconds.")
         async with aiohttp.ClientSession() as session:
             async with session.get(await self.get_image(ctx)) as resp:
