@@ -1,17 +1,22 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 import os
-from dotenv import load_dotenv
 
 # Import from modules
 from music import Music_Player
 from danbooru import Danbooru
 from admin import Admin
+from webserver import keep_alive
 
 # Get tokens from the .env
-load_dotenv()
-DISCORD_TOKEN = os.getenv("discord_token")
-DISCORD_GUILD = os.getenv('discord_guild')
+# from dotenv import load_dotenv
+# load_dotenv()
+# DISCORD_TOKEN = os.getenv("discord_token")
+# DISCORD_GUILD = os.getenv('discord_guild')
+
+# Get tokens from Replit env
+DISCORD_TOKEN = os.environ['discord_token']
+DISCORD_GUILD = os.environ['discord_guild']
 
 # Initialise
 intents = discord.Intents().all()
@@ -48,4 +53,5 @@ async def setup():
     bot.add_cog(Admin(bot))
 
 bot.loop.create_task(setup())
+keep_alive()
 bot.run(DISCORD_TOKEN)

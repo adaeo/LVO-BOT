@@ -1,11 +1,9 @@
 import discord
 from discord.ext import commands
-from dotenv import load_dotenv
-import os
 
-# Get owner ID from .env
-load_dotenv()
-BOT_OWNER_ID = os.getenv('bot_owner_id')
+
+# Get owner ID
+BOT_OWNER_ID = 302967111980941312
 
 class Admin(commands.Cog):
     def __init__(self, bot):
