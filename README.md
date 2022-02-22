@@ -12,5 +12,7 @@ Discord Bot that plays music and retrieves images from danbooru (as of this upda
 - change output messages to embeds (or something consistent)
 
 # KNOWN BUGS
-- Sometimes gets stuck in queue and stops playing entirely. Occurs when a song is queued right as a song ends when the queue is empty. Requires bot to rejoin vc to fix.
 - Music quality speeding up or down is a result of my internet. 
+
+# OTHER
+- Dependcy on youtube-dl package. Any version > 2020.12.2 will not work due to Youtube removing dislikes.

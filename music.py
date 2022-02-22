@@ -23,6 +23,8 @@ class Music_Player(commands.Cog):
             ctx.voice_client.stop()
             await self.play_song(ctx, self.song_queue[ctx.guild.id][0])
             self.song_queue[ctx.guild.id].pop(0)
+        else:
+            ctx.voice_client.stop()
 
     async def search_song(self, amount, song, get_url=False):
         # Retrieves results for a search query
@@ -65,6 +67,7 @@ class Music_Player(commands.Cog):
 
     @commands.command(help="Play a song using url or first result from keywords.")
     async def play(self, ctx, *, song=None):
+        print(ctx.voice_client.source)
         # Attempt to play song using url or first search result
         if song is None:
             return await ctx.send("You must include a song to play.")
@@ -85,7 +88,6 @@ class Music_Player(commands.Cog):
 
         if ctx.voice_client.source is not None:
             queue_len = len(self.song_queue[ctx.guild.id])
-
             if queue_len < 25:
                 self.song_queue[ctx.guild.id].append(song)
                 return await ctx.send(f"I am currently playing a song, this song has been added to queue at postion: {queue_len+1}.")
