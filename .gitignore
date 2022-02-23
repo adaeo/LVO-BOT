@@ -1,8 +1,8 @@
-# Replit Config Files
-.replit
-
 # Required Audio Software
 ffmpeg.exe
+Lavalink.jar
+application.yml
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

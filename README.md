@@ -1,6 +1,5 @@
 # LVO-BOT
-Discord Bot that plays music and retrieves images from danbooru (as of this update).
-
+Discord Bot that plays music using Lavalink and retrieves images from danbooru (as of this update).
 
 # TODO
 - display song title instead of URL when using !queue
@@ -10,9 +9,13 @@ Discord Bot that plays music and retrieves images from danbooru (as of this upda
 - expand danbooru capabilities
 - add cooldowns to commands
 - change output messages to embeds (or something consistent)
+- Build a blackjack game using DM's
 
 # KNOWN BUGS
-- Music quality speeding up or down is a result of my internet. 
+- Music quality is a result of my internet. 
 
-# OTHER
-- Dependcy on youtube-dl package. Any version > 2020.12.2 will not work due to Youtube removing dislikes.
+# DEPENDENCIES
+- discord.py
+- aiohttp
+- lavalink.py
+- Lavalink.jar and Java SDK 11+

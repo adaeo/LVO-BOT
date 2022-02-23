@@ -6,7 +6,7 @@ from discord.ext import commands
 BOT_OWNER_ID = 302967111980941312
 
 class Admin(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot : commands.Bot):
         self.bot = bot
 
     @commands.command(help='responds with bot latency')

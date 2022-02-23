@@ -3,7 +3,7 @@ from discord.ext import commands
 import os
 
 # Import from modules
-from music import Music_Player
+from music import MusicPlayer
 from danbooru import Danbooru
 from admin import Admin
 
@@ -13,12 +13,10 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv("discord_token")
 DISCORD_GUILD = os.getenv('discord_guild')
 
-
 # Initialise
 intents = discord.Intents().all()
 client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix='~', intents=intents)
-
 
 # Confirm ready status in console output
 @bot.event
@@ -44,7 +42,7 @@ async def rules(ctx):
 # Setup cogs after the bot is ready to prevent empty fields e.g. Guild ID
 async def setup():
     await bot.wait_until_ready()
-    bot.add_cog(Music_Player(bot))
+    bot.add_cog(MusicPlayer(bot))
     bot.add_cog(Danbooru(bot))
     bot.add_cog(Admin(bot))
 

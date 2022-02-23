@@ -20,7 +20,7 @@ class Danbooru(commands.Cog):
         await ctx.send(message, delete_after=5)
         await ctx.message.delete(delay=5)
 
-    @commands.cooldown(1, 5, commands.BucketType.guild)
+    @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(help="Returns a random image from Danbooru")
     async def danbooru(self, ctx):
         # Attempts to send random danbooru image
