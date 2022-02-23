@@ -16,6 +16,11 @@ class Danbooru(commands.Cog):
         json_data = json.loads(response.text)
         return json_data['file_url']
 
+    async def send_error(self, ctx, message):
+        await ctx.send(message, delete_after=5)
+        await ctx.message.delete(delay=5)
+
+    @commands.cooldown(1, 5, commands.BucketType.guild)
     @commands.command(help="Returns a random image from Danbooru")
     async def danbooru(self, ctx):
         # Attempts to send random danbooru image
@@ -30,4 +35,8 @@ class Danbooru(commands.Cog):
     @danbooru.error
     async def on_command_error(self, ctx, error):
         message = f"Something went wrong, please try again."
+
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"On cooldown! {ctx.author.mention}"
+
         await self.send_error(ctx, message)
