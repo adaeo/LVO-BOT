@@ -16,6 +16,7 @@ Discord Bot that plays music using Lavalink and retrieves images from danbooru (
 
 # DEPENDENCIES
 - discord.py
+- pycord.py
 - aiohttp
-- lavalink.py
+- wavelink.py
 - Lavalink.jar and Java SDK 11+
