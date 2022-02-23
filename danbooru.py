@@ -26,3 +26,8 @@ class Danbooru(commands.Cog):
                     return await ctx.send('Could not download file...')
                 data = io.BytesIO(await resp.read())
                 await ctx.send(file=discord.File(data, 'random_img.png'))
+
+    @danbooru.error
+    async def on_command_error(self, ctx, error):
+        message = f"Something went wrong, please try again."
+        await self.send_error(ctx, message)
