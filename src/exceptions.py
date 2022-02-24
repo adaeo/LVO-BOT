@@ -28,3 +28,9 @@ class AlreadyPlaying(Exception):
     def __init__(self, ctx):
         self.message = f"The player is already playing {ctx.author.mention}!"
         super().__init__(self.message)
+
+class DownloadException(Exception):
+    # Raised when an error occurs during a download
+    def __init__(self, ctx):
+        self.message = f"Something went wrong during download {ctx.author.mention}."
+        super().__init__(self.message)
