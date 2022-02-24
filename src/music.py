@@ -19,10 +19,17 @@ class MusicPlayer(commands.Cog):
     async def connect_nodes(self):
         # Connect to Lavalink Nodes
         await self.bot.wait_until_ready()
-        await wavelink.NodePool.create_node(bot=self.bot,
-                                            host='127.0.0.1',
-                                            port=2333,
-                                            password='youshallnotpass')
+        # Local Connection
+        # await wavelink.NodePool.create_node(bot=self.bot,
+        #                             host='127.0.0.1',
+        #                             port=2333,
+        #                             password='youshallnotpass')
+        # Replit Connection
+        await wavelink.NodePool.create_node(bot=self.bot, 
+                                            host='lavalink-replit.adaeo.repl.co',
+                                            port=443,
+                                            password='lvopwd', 
+                                            https=True)
 
     async def is_connected(self, ctx: commands.Context):
         # Returns if the voice_client is connected to a voice channel

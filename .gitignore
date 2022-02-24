@@ -1,3 +1,10 @@
+# Replit Files
+poetry.lock
+package-lock.json
+pyproject.toml
+.replit
+node_modules/
+
 # Required Audio Software
 ffmpeg.exe
 Lavalink.jar
