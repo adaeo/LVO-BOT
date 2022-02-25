@@ -25,16 +25,10 @@ class Danbooru(commands.Cog):
     @commands.command(help="Returns a random image from Danbooru")
     async def danbooru(self, ctx):
       try:
-          async with aiohttp.ClientSession() as session:
-              async with session.get(await self.get_image(ctx)) as resp:
-                # Attempts to send random danbooru image
-                  retrieve_msg = await ctx.send("Retrieving image... this will take a few seconds.")
-                  if resp.status != 200:
-                      await retrieve_msg.delete()
-                      raise exceptions.DownloadException(ctx)
-                  data = io.BytesIO(await resp.read())
-                  await retrieve_msg.delete()
-                  await ctx.send(file=discord.File(data, 'random_img.png'))
+          retrieve_msg = await ctx.send("Retrieving image... this will take a few seconds.")
+          image_link = await self.get_image(ctx)          
+          await retrieve_msg.delete()
+          await ctx.send(image_link)
       except exceptions.DownloadException as error:
           await retrieve_msg.delete()
           await self.send_error(ctx, error.message)
@@ -45,6 +39,6 @@ class Danbooru(commands.Cog):
         message = f"Something went wrong, please try again."
 
         if isinstance(error, commands.CommandOnCooldown):
-            message = f"On cooldown! {ctx.author.mention}"
+            message = f"{error} {ctx.author.mention}"
 
         await self.send_error(ctx, message)
