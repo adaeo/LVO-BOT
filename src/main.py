@@ -50,7 +50,11 @@ async def setup():
     bot.add_cog(MusicPlayer(bot))
     bot.add_cog(Danbooru(bot))
     bot.add_cog(Admin(bot))
-
 bot.loop.create_task(setup())
 keep_alive()
-bot.run(DISCORD_TOKEN)
+
+try:
+    bot.run(DISCORD_TOKEN)
+except:
+    os.system("kill 1") # If bot fails to run, kill current Replit container.
+

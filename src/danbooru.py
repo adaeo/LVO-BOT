@@ -1,9 +1,6 @@
-import discord
 from discord.ext import commands
 import requests
 import json
-import io
-import aiohttp
 import exceptions
 
 class Danbooru(commands.Cog):
@@ -25,12 +22,12 @@ class Danbooru(commands.Cog):
     @commands.command(help="Returns a random image from Danbooru")
     async def danbooru(self, ctx):
       try:
-          retrieve_msg = await ctx.send("Retrieving image... this will take a few seconds.")
+          retrieve_msg = await ctx.send("Retrieving image... this will take a few seconds.", delete_after=5)
           image_link = await self.get_image(ctx)          
           await retrieve_msg.delete()
           await ctx.send(image_link)
       except exceptions.DownloadException as error:
-          await retrieve_msg.delete()
+          await self.retrieve_msg.delete()
           await self.send_error(ctx, error.message)
           
 
@@ -40,5 +37,5 @@ class Danbooru(commands.Cog):
 
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
-
+        
         await self.send_error(ctx, message)
