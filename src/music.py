@@ -69,13 +69,22 @@ class MusicPlayer(commands.Cog):
         await ctx.send(message, delete_after=3)
         await ctx.message.delete(delay=3)
 
-    @commands.command()
+    @commands.command(help="Joins voice channel.")
+    @commands.cooldown(1, 10, commands.BucketType.guild)
     async def join(self, ctx: commands.Context):
         # Joins voice channel of message author
         await self.connect_to(ctx)
         await ctx.message.delete(delay=2)
 
-    @commands.command()
+    @join.error
+    async def on_command_error(self, ctx, error):
+        # Handles discord.py errors from ~join
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
+    
+    @commands.command(help="Leaves voice channel.")
+    @commands.cooldown(1, 10, commands.BucketType.guild) # Somewhat redundant
     async def leave(self, ctx: commands.Context):
         try:
             # Stops player and leaves voice channel
@@ -95,7 +104,15 @@ class MusicPlayer(commands.Cog):
         except exceptions.NotInMyChannel as error:
             await self.send_error(ctx, error.message)
 
-    @commands.command()
+    @leave.error
+    async def on_command_error(self, ctx, error):
+        # Handles discord.py errors from ~leave
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
+
+    @commands.command(help="Search and play a video from YouTube.")
+    @commands.cooldown(1, 10, commands.BucketType.guild)
     async def play(self, ctx: commands.Context, *, query: str):
         try:
             if not (await self.is_connected(ctx)): await self.connect_to(ctx)
@@ -164,25 +181,39 @@ class MusicPlayer(commands.Cog):
         # Handles errors related to ~play function.
         if isinstance(error, commands.MissingRequiredArgument):
             message = f"You must provide a query {ctx.author.mention}!"
-            await self.send_error(ctx, message)
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
 
-    @commands.command()
+    @commands.command(help="Skips currently playing song.")
+    @commands.cooldown(1, 1, commands.BucketType.guild)
     async def skip(self, ctx: commands.Context):
         try:
             # No in-built skip function, just override current song with play()
             vc : wavelink.Player = ctx.voice_client
             if (ctx.author.voice.channel != vc.channel): raise exceptions.NotInMyChannel(ctx)
+            if (vc.track is None): raise exceptions.NotPlaying(ctx)
             await vc.stop()
             await ctx.send(f"Now skipping {self.now_playing.title}", delete_after=2)
             await ctx.message.delete(delay=2)
 
         except exceptions.NotInMyChannel as error:
             await self.send_error(ctx, error.message)
-        except AttributeError:
+        except exceptions.NotPlaying as error:
+            await self.send_error(ctx, error.message)
+        except AttributeError as error:
             message = f"I am not in a voice channel {ctx.author.mention}!"
             await self.send_error(ctx, message)
+            
+    @skip.error
+    async def on_command_error(self, ctx, error):
+        # Handles discord.py errors from ~skip
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
 
-    @commands.command()
+    @commands.command(help="Displays current song queue.")
+    @commands.cooldown(1, 10, commands.BucketType.guild)
     async def queue(self, ctx: commands.Context):
         try: 
             vc : wavelink.Player = ctx.voice_client
@@ -211,8 +242,16 @@ class MusicPlayer(commands.Cog):
             message = f"The queue is empty!"
             await self.send_error(ctx, message)
 
-    @commands.command()
-    async def now_playing(self, ctx: commands.Context):
+    @queue.error
+    async def on_command_error(self, ctx, error):
+        # Handles discord.py errors from ~queue
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
+
+    @commands.command(help="Displays currently playing song.")
+    @commands.cooldown(1, 10, commands.BucketType.guild)
+    async def song(self, ctx: commands.Context):
         try:
             vc : wavelink.Player = ctx.voice_client
             if (ctx.author.voice.channel != vc.channel): 
@@ -229,7 +268,15 @@ class MusicPlayer(commands.Cog):
             message = f"I am not in a voice channel {ctx.author.mention}!"
             await self.send_error(ctx, message)
 
-    @commands.command()
+    @song.error
+    async def on_command_error(self, ctx, error):
+        # Handles discord.py errors from ~song
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
+
+    @commands.command(help="Pauses currently playing song.")
+    @commands.cooldown(1, 2, commands.BucketType.guild)
     async def pause(self, ctx: commands.Context):
         try:
             vc : wavelink.Player = ctx.voice_client
@@ -252,7 +299,15 @@ class MusicPlayer(commands.Cog):
             message = f"I am not in a voice channel {ctx.author.mention}!"
             await self.send_error(ctx, message)
 
-    @commands.command()
+    @pause.error
+    async def on_command_error(self, ctx, error):
+        # Handles discord.py errors from ~pause
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
+
+    @commands.command(help="Resumes currently paused song.")
+    @commands.cooldown(1, 2, commands.BucketType.guild)
     async def resume(self, ctx: commands.Context):
         try:
             vc : wavelink.Player = ctx.voice_client
@@ -274,6 +329,13 @@ class MusicPlayer(commands.Cog):
         except AttributeError:
             message = f"I am not in a voice channel {ctx.author.mention}!"
             await self.send_error(ctx, message)
+
+    @resume.error
+    async def on_command_error(self, ctx, error):
+        # Handles discord.py errors from ~resume
+        if isinstance(error, commands.CommandOnCooldown):
+            message = f"{error} {ctx.author.mention}"
+        await self.send_error(ctx, message)
 
     @commands.command(hidden=True)
     async def status(self, ctx: commands.Context):

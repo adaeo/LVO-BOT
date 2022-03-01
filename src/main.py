@@ -40,6 +40,7 @@ async def setup():
     await bot.wait_until_ready()
     bot.add_cog(MusicPlayer(bot))
     bot.add_cog(Admin(bot))
+    
 bot.loop.create_task(setup())
 #!keep_alive()
 
