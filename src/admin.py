@@ -25,3 +25,17 @@ class Admin(commands.Cog):
 
         await ctx.send(f"Setting status to {str(text)}")
         await self.bot.change_presence(activity=discord.Game(name=str(text)))
+
+    # Miscellaneous
+    @commands.command(name="amogus", hidden=True)
+    async def amogus(ctx):
+        await ctx.send("https://c.tenor.com/fWICUw1py9UAAAAd/among-us-meme.gif")
+
+    @commands.command(name='moyai', hidden=True)
+    async def rules(ctx):
+        await ctx.send("https://c.tenor.com/Yu6oaGFXFVAAAAAC/ratio-moyai.gif")
+
+    @commands.command(name="danbooru", hidden=True)
+    async def danbooru(ctx):
+        await ctx.send("This feature has been disabled. Sorry.", delete_after=5)
+        await ctx.message.delete(delay=5)
