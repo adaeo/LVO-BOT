@@ -1,20 +1,16 @@
 # LVO-BOT
-Discord Bot that plays music using Lavalink and retrieves images from danbooru (as of this update).
+- Discord Bot that plays music using Lavalink(as of this update).
+- Hosted on Replit and utilises Lavalink client.
 
 # TODO
-- write a proper formatted README and add comments/documentation
-- administrative abilites, ensure ready for public use
-- expand danbooru capabilities
-- add cooldowns to commands
-- change output messages to embeds (or something consistent)
-- Build a blackjack game using DM's
+- write a proper formatted README and add (more) comments/documentation
+- Build a blackjack game using DM's. (In progress now...)
 
 # KNOWN BUGS
-- Music quality is a result of my internet. 
+- Music quality is a result of my internet / Replit. 
 
 # DEPENDENCIES
 - discord.py
 - pycord.py
-- aiohttp
 - wavelink.py
 - Lavalink.jar and Java SDK 11+
