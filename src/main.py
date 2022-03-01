@@ -4,7 +4,6 @@ import os
 
 # Import from modules
 from music import MusicPlayer
-from danbooru import Danbooru
 from admin import Admin
 from webserver import keep_alive
 
@@ -48,7 +47,6 @@ async def rules(ctx):
 async def setup():
     await bot.wait_until_ready()
     bot.add_cog(MusicPlayer(bot))
-    bot.add_cog(Danbooru(bot))
     bot.add_cog(Admin(bot))
 bot.loop.create_task(setup())
 keep_alive()
