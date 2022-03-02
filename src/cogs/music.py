@@ -2,7 +2,7 @@ from discord.ext import commands
 from discord import utils, Embed, errors
 import wavelink
 import asyncio
-import exceptions
+import utility.exceptions as exceptions
 
 
 class MusicPlayer(commands.Cog):
@@ -37,16 +37,12 @@ class MusicPlayer(commands.Cog):
         return voice_client and voice_client.is_connected()
 
     async def connect_to(self, ctx: commands.Context):
-        try:
-            if ctx.author.voice is None: raise exceptions.NotInAChannel(ctx)
-            if ctx.voice_client is not None: await ctx.voice_client.disconnect()
+        if ctx.author.voice is None: raise exceptions.NotInAChannel(ctx)
+        if ctx.voice_client is not None: await ctx.voice_client.disconnect()
 
-            await ctx.send(f"Joining voice channel: {ctx.author.voice.channel}.", delete_after=2)
-            vc : wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
-            await vc.set_volume(50) # Set volume to 50%
-
-        except exceptions.NotInAChannel as error:
-            await self.send_error(ctx, error.message)
+        await ctx.send(f"Joining voice channel: {ctx.author.voice.channel}.", delete_after=2)
+        vc : wavelink.Player = await ctx.author.voice.channel.connect(cls=wavelink.Player)
+        await vc.set_volume(50) # Set volume to 50%
 
     async def check_queue(self, player: wavelink.Player):
         vc : wavelink.Player = player
@@ -73,12 +69,16 @@ class MusicPlayer(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.guild)
     async def join(self, ctx: commands.Context):
         # Joins voice channel of message author
-        await self.connect_to(ctx)
-        await ctx.message.delete(delay=2)
+        try:
+            await self.connect_to(ctx)
+            await ctx.message.delete(delay=2)
+        except exceptions.NotInAChannel as error:
+            await self.send_error(ctx, error.message)
 
     @join.error
     async def on_command_error(self, ctx, error):
         # Handles discord.py errors from ~join
+        message = "Something went wrong..."
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
         await self.send_error(ctx, message)
@@ -107,6 +107,7 @@ class MusicPlayer(commands.Cog):
     @leave.error
     async def on_command_error(self, ctx, error):
         # Handles discord.py errors from ~leave
+        message = "Something went wrong..."
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
         await self.send_error(ctx, message)
@@ -169,6 +170,8 @@ class MusicPlayer(commands.Cog):
 
         except exceptions.NotInMyChannel as error:
             await self.send_error(ctx, error.message)
+        except exceptions.NotInAChannel as error:
+            await self.send_error(ctx, error.message)
         except IndexError:
             message = f"Please choose a number from above {ctx.author.mention}!"
             await self.send_error(ctx, message)
@@ -179,6 +182,7 @@ class MusicPlayer(commands.Cog):
     @play.error
     async def on_command_error(self, ctx, error):
         # Handles errors related to ~play function.
+        message = "Something went wrong..."
         if isinstance(error, commands.MissingRequiredArgument):
             message = f"You must provide a query {ctx.author.mention}!"
         if isinstance(error, commands.CommandOnCooldown):
@@ -208,6 +212,7 @@ class MusicPlayer(commands.Cog):
     @skip.error
     async def on_command_error(self, ctx, error):
         # Handles discord.py errors from ~skip
+        message = "Something went wrong..."
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
         await self.send_error(ctx, message)
@@ -245,6 +250,7 @@ class MusicPlayer(commands.Cog):
     @queue.error
     async def on_command_error(self, ctx, error):
         # Handles discord.py errors from ~queue
+        message = "Something went wrong..."
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
         await self.send_error(ctx, message)
@@ -271,6 +277,7 @@ class MusicPlayer(commands.Cog):
     @song.error
     async def on_command_error(self, ctx, error):
         # Handles discord.py errors from ~song
+        message = "Something went wrong..."
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
         await self.send_error(ctx, message)
@@ -302,6 +309,7 @@ class MusicPlayer(commands.Cog):
     @pause.error
     async def on_command_error(self, ctx, error):
         # Handles discord.py errors from ~pause
+        message = "Something went wrong..."
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
         await self.send_error(ctx, message)
@@ -333,6 +341,7 @@ class MusicPlayer(commands.Cog):
     @resume.error
     async def on_command_error(self, ctx, error):
         # Handles discord.py errors from ~resume
+        message = "Something went wrong..."
         if isinstance(error, commands.CommandOnCooldown):
             message = f"{error} {ctx.author.mention}"
         await self.send_error(ctx, message)
