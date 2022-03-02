@@ -28,14 +28,14 @@ class Admin(commands.Cog):
 
     # Miscellaneous
     @commands.command(name="amogus", hidden=True)
-    async def amogus(ctx):
+    async def amogus(self, ctx):
         await ctx.send("https://c.tenor.com/fWICUw1py9UAAAAd/among-us-meme.gif")
 
     @commands.command(name='moyai', hidden=True)
-    async def rules(ctx):
+    async def rules(self, ctx):
         await ctx.send("https://c.tenor.com/Yu6oaGFXFVAAAAAC/ratio-moyai.gif")
 
     @commands.command(name="danbooru", hidden=True)
-    async def danbooru(ctx):
+    async def danbooru(self, ctx):
         await ctx.send("This feature has been disabled. Sorry.", delete_after=5)
         await ctx.message.delete(delay=5)
