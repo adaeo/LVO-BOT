@@ -138,13 +138,16 @@ class MusicPlayer(commands.Cog):
 
             result_embed = Embed()
             result_embed.description = query_result
-            result_embed.title= "Please type a number corresponding to the song you want to play."
+            result_embed.title= "Please type a number corresponding to the song you want to play. Type ~ in front!"
             query_result = await ctx.channel.send(embed=result_embed, delete_after=20)
             await wait_msg.delete()
 
             # Check author is same as author who issued initial command
             def check(m): 
-                return m.author.id == ctx.author.id 
+                return (
+                    m.author.id == ctx.author.id 
+                    and m.channel.id == ctx.channel.id
+                )
             response = await self.bot.wait_for('message', check=check, timeout=20)
 
             # Clean up commands in channel
