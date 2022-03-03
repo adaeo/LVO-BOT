@@ -9,12 +9,12 @@ class Admin(commands.Cog):
     def __init__(self, bot : commands.Bot):
         self.bot = bot
 
-    @commands.command(help='responds with bot latency')
+    @commands.command(help='Responds with bot latency.')
     async def ping(self, ctx):
         # Pings bot and returns latency in ms
         await ctx.send(f"pong! {round(self.bot.latency * 1000)}ms")
 
-    @commands.command(help='sets status of bot')
+    @commands.command(help='Sets status of bot.')
     async def setstatus(self, ctx, *, text=None):
         # sets status message of bot. Only owner can use.
         if (str(ctx.message.author.id) != BOT_OWNER_ID):
