@@ -34,3 +34,27 @@ class DownloadException(Exception):
     def __init__(self, ctx):
         self.message = f"Something went wrong during download {ctx.author.mention}."
         super().__init__(self.message)
+
+class GameExists(Exception):
+    # Raised when a game already exists
+    def __init__(self, ctx):
+        self.message = f"A game has already been created in this guild {ctx.author.mention}!"
+        super().__init__(self.message)
+
+class GameCancelled(Exception):
+    # Raised when a game is cancelled
+    def __init__(self, ctx):
+        self.message = f"The game has been cancelled {ctx.author.mention}."
+        super().__init__(self.message)
+        
+class NotEnoughPlayers(Exception):
+    # Raised when not enough players are present
+    def __init__(self, ctx, num: int):
+        self.message = f"Min number of players is {str(num)} {ctx.author.mention}!\nCancelling game..."
+        super().__init__(self.message)
+
+class TooManyPlayers(Exception):
+    # Raised when too many players are present
+    def __init__(self, ctx, num: int):
+        self.message = f"Max number of players is {str(num)} {ctx.author.mention}!\nCancelling game..."
+        super().__init__(self.message)
