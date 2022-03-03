@@ -35,8 +35,8 @@ class Blackjack(commands.Cog):
 
         dealer_cards = "\nDealer's cards:"
         for card in dealer.GetHand():
-            dealer_cards += f"\n{card.GetName()}"
-        dealer_score_msg = f"\n\nThe dealer's score was: {dealer.GetScore()}"
+            dealer_cards += f"\n- {card.GetName()}"
+        dealer_score_msg = f"\nThe dealer's score was: {dealer.GetScore()}"
 
         all_player_result = ""
         for player in players:
