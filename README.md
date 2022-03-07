@@ -1,10 +1,10 @@
 # LVO-BOT
 - Discord Bot that plays music using Lavalink(as of this update).
+- Play a game of blackjack with others using this bot.
 - Hosted on Replit and utilises Lavalink client.
 
 # TODO
 - write a proper formatted README and add (more) comments/documentation
-- Build a blackjack game using DM's. (In progress now...)
 
 # KNOWN BUGS
 - Music quality is a result of my internet / Replit. 
